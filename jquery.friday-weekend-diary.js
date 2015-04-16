@@ -95,7 +95,8 @@ $(document).ready(function(){
         setInterval(function(){
             $(".fwc-"+index+" .yet").removeClass("may");
             $(".fwc-"+index+" .yet").random().addClass("may");
-        }, 753);
+            $(".blink").fadeOut(150).fadeIn(150);
+        }, 750);
     });
 });
 
