@@ -119,7 +119,8 @@ var LotteryProcessor = function(index, last, localOrder){
         var mm = formattedDate.getMinutes();
         var dateString = d + "." + m + "." + y + " " + h + ":" + mm;
         var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
-	var date =  $("<li class='date'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
+        var blink = data.winnerEntertainmentId > 0 ? "":" blink";
+	var date =  $("<li class='date"+blink+"'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
 	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
 	var entries = $("<li class='entries'></li>");
 	var entertainments = $("<ul class='entertainments'></ul>");
