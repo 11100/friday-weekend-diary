@@ -59,13 +59,15 @@ $(document).ready(function(){
         "  -o-transform-origin: 50% 50%;                 " +
         "  transform-origin: 50% 50%;                    " +
         "   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);" +
-        "   margin-top:5em;                              " +
+        "   margin-top:4.6em;                              " +
         "   width:2em;                                   " +
         "}                                               " +
         ".fridayweekend .date a{                         " +
         "   text-decoration:none;                        " +
         "   color:white;                                 " +
         "   background-color:#25ace4;                    " +
+        "   display:block;                               " +
+        "   width:6em;              ;                    " +
         "}                                               ";
 
     $("head").append($("<style></style>").text(style));
@@ -106,11 +108,16 @@ var LotteryProcessor = function(index, last, localOrder){
 	var lottery = $("<ul class='descriptor'></ul>");
 	var li = $("<li class='lottery'></li>");
 	var winner =  $("<li class='winner'><span>"+data.winnerEntertainmentId+"</span></li>");
-        var formattedDate = new Date(data.date);
+        var a = data.timezoneOffset;
+        var b = (new Date).getTimezoneOffset();
+        var c = new Date(data.date + (a+b) * 60000);
+        var formattedDate = new Date( c.getUTCFullYear(), c.getUTCMonth(), c.getUTCDate(), c.getUTCHours(), c.getUTCMinutes(), c.getUTCSeconds() );
         var d = formattedDate.getDate();
         var m =  formattedDate.getMonth() + 1;
         var y = formattedDate.getFullYear();
-        var dateString = d + "." + m + "." + y;
+        var h = formattedDate.getHours();
+        var mm = formattedDate.getMinutes();
+        var dateString = d + "." + m + "." + y + " " + h + ":" + mm;
         var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
 	var date =  $("<li class='date'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
 	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
