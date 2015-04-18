@@ -93,14 +93,6 @@ $(document).ready(function(){
             }, delay*753);
             delay++;
         });
-        setInterval(function(){
-            var container = $(".fwc-"+index+" .yet").not(".may");
-            $(".fwc-"+index+" .yet").removeClass("may");
-            if(container){
-                container.random().addClass("may");
-            }
-            $(".blink").fadeOut(150).fadeIn(150);
-        }, 750);
     });
 });
 
@@ -109,6 +101,7 @@ var LotteryProcessor = function(index, last, localOrder){
     this.i = index;
     this.order = localOrder;
     this.processLotteryWinner = function(winnerId){
+        $(".lottery.code-"+this.id+".key-"+this.key).removeClass("live");
         $(".lottery.code-"+this.id+".key-"+this.key+" .date").removeClass("blink");
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("may");
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("yet");
@@ -118,13 +111,6 @@ var LotteryProcessor = function(index, last, localOrder){
 
         this.id = data.id;
         this.key = data.key;
-
-	var fwc = $(".fwc-" + this.i);
-	var lottery = $("<ul class='descriptor'></ul>");
-	var li = $("<li class='lottery code-"+data.id+" key-"+data.key+"'></li>");
-	var winner =  $("<li class='winner'><span>"+data.winnerEntertainmentId+"</span></li>");
-        var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
-        var blink = "";
 
         var lotteryDate = data.date;
         var lotteryTimezoneOffset = data.timezoneOffset;
@@ -136,7 +122,6 @@ var LotteryProcessor = function(index, last, localOrder){
         var adjustedLotteryDateTime = timeZoneAdjusted + clientServerDiff;
         var d = new Date(adjustedLotteryDateTime);
         var formattedDate = new Date( d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds() );
-
         var dd = formattedDate.getDate();
         var m =  formattedDate.getMonth() + 1;
         var y = formattedDate.getFullYear();
@@ -144,8 +129,19 @@ var LotteryProcessor = function(index, last, localOrder){
         var mm = formattedDate.getMinutes();
         var dateString = dd + "." + m + "." + y + " " + h + ":" + mm;
 
+	var fwc = $(".fwc-" + this.i);
+	var lottery = $("<ul class='descriptor'></ul>");
+	var li = $("<li class='lottery code-"+data.id+" key-"+data.key+"'></li>");
+	var winner =  $("<li class='winner'><span>"+data.winnerEntertainmentId+"</span></li>");
+        var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
+	var date =  $("<li class='date'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
+	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
+	var entries = $("<li class='entries'></li>");
+	var entertainments = $("<ul class='entertainments'></ul>");
+
         if(data.winnerEntertainmentId == 0){
-            blink = " blink";
+            li.addClass("live");
+            date.addClass("blink");
             var eta_ms = formattedDate.getTime() - Date.now() + 2345;
             var timeout = setTimeout(function(id,key,index,i){
 
@@ -156,10 +152,6 @@ var LotteryProcessor = function(index, last, localOrder){
             }, eta_ms, data.id, data.key,this.i,this.order);
         }
 
-	var date =  $("<li class='date"+blink+"'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
-	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
-	var entries = $("<li class='entries'></li>");
-	var entertainments = $("<ul class='entertainments'></ul>");
 	$(data.entertainments).each(function(){
 	    var entry = $("<li class='entry id-"+this.id+"'></li>");
             if(data.winnerEntertainmentId > 0){
@@ -193,6 +185,16 @@ var LotteryProcessor = function(index, last, localOrder){
                 return $(this).width();
             }).get()) + 100;
             $(".fridayweekend").css("width", max + "px");
+            setInterval(function(){
+                $(".lottery.live").each(function(){
+                    var container = $(this).find(".yet").not(".may");
+                    $(this).find(".yet").removeClass("may");
+                    if(container){
+                        container.random().addClass("may");
+                    }
+                });
+                $(".date.blink").fadeOut(150).fadeIn(150);
+            }, 1000);
         }
     };
     this.processLottery = function(data){
