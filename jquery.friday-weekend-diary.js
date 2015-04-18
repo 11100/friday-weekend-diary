@@ -7,6 +7,8 @@ jQuery.fn.random = function() {
 var order = 0;
 var storyProcessors = [[]];
 var fwcWinnerPrefix = "http://www.fridayweekend.com/rest/getLotteryWinner/";
+var fwcPrefix = "http://www.fridayweekend.com/rest/getLottery/";
+var fwcSuffix = "?callback=storyProcessors";
 
 $(document).ready(function(){
     var style = 
@@ -72,8 +74,6 @@ $(document).ready(function(){
         "}                                               ";
 
     $("head").append($("<style></style>").text(style));
-    var fwcPrefix = "http://www.fridayweekend.com/rest/getLottery/";
-    var fwcSuffix = "?callback=storyProcessors";
 
     $(".fridayweekend").each(function(index,elem){
         var note = $(this).data("story").split(",").reverse();
@@ -105,7 +105,15 @@ var LotteryProcessor = function(index, last, localOrder){
     this.last = last;
     this.i = index;
     this.order = localOrder;
+    this.processLotteryWinner = function(winnerId){
+        $(".lottery.code-"+this.id+".key-"+this.key+" .date").removeClass("blink");
+        $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("may");
+        $(".lottery.code-"+this.id+".key-"+this.key+" .entry.id-"+winnerId).addClass("yes");
+    }
     this.insertLottery = function(data){
+
+        this.id = data.id;
+        this.key = data.key;
 
 	var fwc = $(".fwc-" + this.i);
 	var lottery = $("<ul class='descriptor'></ul>");
@@ -134,17 +142,14 @@ var LotteryProcessor = function(index, last, localOrder){
 
         if(data.winnerEntertainmentId == 0){
             blink = " blink";
-            var eta_ms = formattedDate.getTime() - Date.now();
-            var timeout = setTimeout(function(id,key){
-                $.ajax({
-                    url: fwcWinnerPrefix + id + "/" + key,
-                    context: document.body
-                }).done(function(response) {
-                    $(".lottery.code-"+id+".key-"+key+" date").removeClass("blink");
-                    $(".lottery.code-"+id+".key-"+key+" entry").removeClass("may");
-                    $(".lottery.code-"+id+".key-"+key+" entry.id-"+response).addClass("yes");
-                });
-            }, eta_ms, data.id, data.key);
+            var eta_ms = formattedDate.getTime() - Date.now() + 2345;
+            var timeout = setTimeout(function(id,key,index,i){
+
+                var script = document.createElement('script');
+                script.src = fwcWinnerPrefix+id+"/"+key+fwcSuffix+"["+index+"]["+i+"].processLotteryWinner";
+                $("head").append(script);
+
+            }, eta_ms, data.id, data.key,this.i,0);
         }
 
 	var date =  $("<li class='date"+blink+"'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
