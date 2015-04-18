@@ -94,8 +94,11 @@ $(document).ready(function(){
             delay++;
         });
         setInterval(function(){
+            var container = $(".fwc-"+index+" .yet").not(".may");
             $(".fwc-"+index+" .yet").removeClass("may");
-            $(".fwc-"+index+" .yet").random().addClass("may");
+            if(container){
+                container.random().addClass("may");
+            }
             $(".blink").fadeOut(150).fadeIn(150);
         }, 750);
     });
@@ -108,6 +111,7 @@ var LotteryProcessor = function(index, last, localOrder){
     this.processLotteryWinner = function(winnerId){
         $(".lottery.code-"+this.id+".key-"+this.key+" .date").removeClass("blink");
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("may");
+        $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("yet");
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry.id-"+winnerId).addClass("yes");
     }
     this.insertLottery = function(data){
@@ -149,7 +153,7 @@ var LotteryProcessor = function(index, last, localOrder){
                 script.src = fwcWinnerPrefix+id+"/"+key+fwcSuffix+"["+index+"]["+i+"].processLotteryWinner";
                 $("head").append(script);
 
-            }, eta_ms, data.id, data.key,this.i,0);
+            }, eta_ms, data.id, data.key,this.i,this.order);
         }
 
 	var date =  $("<li class='date"+blink+"'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
