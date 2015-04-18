@@ -6,6 +6,7 @@ jQuery.fn.random = function() {
 
 var order = 0;
 var storyProcessors = [[]];
+var fwcWinnerPrefix = "http://www.fridayweekend.com/rest/getLotteryWinner/";
 
 $(document).ready(function(){
     var style = 
@@ -105,28 +106,53 @@ var LotteryProcessor = function(index, last, localOrder){
     this.i = index;
     this.order = localOrder;
     this.insertLottery = function(data){
+
 	var fwc = $(".fwc-" + this.i);
 	var lottery = $("<ul class='descriptor'></ul>");
-	var li = $("<li class='lottery'></li>");
+	var li = $("<li class='lottery code-"+data.id+" key-"+data.key+"'></li>");
 	var winner =  $("<li class='winner'><span>"+data.winnerEntertainmentId+"</span></li>");
-        var a = data.timezoneOffset;
-        var b = (new Date).getTimezoneOffset();
-        var c = new Date(data.date + (a+b) * 60000);
-        var formattedDate = new Date( c.getUTCFullYear(), c.getUTCMonth(), c.getUTCDate(), c.getUTCHours(), c.getUTCMinutes(), c.getUTCSeconds() );
-        var d = formattedDate.getDate();
+        var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
+        var blink = "";
+
+        var lotteryDate = data.date;
+        var lotteryTimezoneOffset = data.timezoneOffset;
+        var browserTimezoneOffset = (new Date).getTimezoneOffset();
+        var gmtJsonGenerationDateTime = data.gmtJsonGenerationDateTime;
+        var browserFragmentGenerationTime = Date.now();
+        var timeZoneAdjusted = lotteryDate + lotteryTimezoneOffset - browserTimezoneOffset;
+        var clientServerDiff = browserFragmentGenerationTime + browserTimezoneOffset - gmtJsonGenerationDateTime;
+        var adjustedLotteryDateTime = timeZoneAdjusted + clientServerDiff;
+        var d = new Date(adjustedLotteryDateTime);
+        var formattedDate = new Date( d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds() );
+
+        var dd = formattedDate.getDate();
         var m =  formattedDate.getMonth() + 1;
         var y = formattedDate.getFullYear();
         var h = formattedDate.getHours();
         var mm = formattedDate.getMinutes();
-        var dateString = d + "." + m + "." + y + " " + h + ":" + mm;
-        var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
-        var blink = data.winnerEntertainmentId > 0 ? "":" blink";
+        var dateString = dd + "." + m + "." + y + " " + h + ":" + mm;
+
+        if(data.winnerEntertainmentId == 0){
+            blink = " blink";
+            var eta_ms = formattedDate.getTime() - Date.now();
+            var timeout = setTimeout(function(id,key){
+                $.ajax({
+                    url: fwcWinnerPrefix + id + "/" + key,
+                    context: document.body
+                }).done(function(response) {
+                    $(".lottery.code-"+id+".key-"+key+" date").removeClass("blink");
+                    $(".lottery.code-"+id+".key-"+key+" entry").removeClass("may");
+                    $(".lottery.code-"+id+".key-"+key+" entry.id-"+response).addClass("yes");
+                });
+            }, eta_ms, data.id, data.key);
+        }
+
 	var date =  $("<li class='date"+blink+"'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
 	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
 	var entries = $("<li class='entries'></li>");
 	var entertainments = $("<ul class='entertainments'></ul>");
 	$(data.entertainments).each(function(){
-	    var entry = $("<li class='entry'></li>");
+	    var entry = $("<li class='entry id-"+this.id+"'></li>");
             if(data.winnerEntertainmentId > 0){
                 if(this.id == data.winnerEntertainmentId){
                     entry.addClass("yes");
