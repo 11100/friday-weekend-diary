@@ -13,14 +13,34 @@ var fwcSuffix = "?callback=storyProcessors";
 $(document).ready(function(){
     var style = 
         ".fridayweekend {                                " +
-        "       width: 10000px;                          " +
+        "       width: 95%;                              " +
+        "       min-width: 800px;                        " +
+        "       overflow: hidden;                        " +
+        "}                                               " +
+        ".entries {                                      " +
+        "       width: 95%;                              " +
+        "       overflow: hidden;                        " +
+        "       margin-left:1ex;                         " +
+        "}                                               " +
+        ".lottery {                                      " +
+        "       width: 99%;                              " +
+        "}                                               " +
+        ".descriptor {                                   " +
+        "       width: 99%;                              " +
         "}                                               " +
         ".fridayweekend img {                            " +
         "       width: 101px;                            " +
         "}                                               " +
         ".fridayweekend .entertainments {                " +
-        "       height: 115px;                           " +
+        "       height: 95px;                            " +
+        "       width: 10000px;                          " +
         "       overflow: hidden;                        " +
+        "}                                               " +
+        ".transition {                                   " +
+        "      -webkit-transition: margin-left 0.9s;     " +
+        "      -moz-transition: margin-left 0.9s;        " +
+        "      -o-transition: margin-left 0.9s;          " +
+        "      transition: margin-left 0.9s;             " +
         "}                                               " +
         ".fridayweekend li.yes{                          " + 
         "	background:#abcdef;                      " + 
@@ -181,10 +201,13 @@ var LotteryProcessor = function(index, last, localOrder){
 	li.append(lottery);
 	fwc.append(li);
         if(this.last){
-            var max = Math.max.apply(Math, $('.fridayweekend .entertainments').map(function(){
-                return $(this).width();
-            }).get()) + 100;
-            $(".fridayweekend").css("width", max + "px");
+            $("ul.entertainments").each(function(){
+                var sum = 0;
+                $(this).children().each(function(){ 
+                    sum += $(this).width(); 
+                });
+                $(this).width(sum);
+            });
             setInterval(function(){
                 $(".lottery.live").each(function(){
                     var container = $(this).find(".yet").not(".may");
@@ -193,7 +216,32 @@ var LotteryProcessor = function(index, last, localOrder){
                         container.random().addClass("may");
                     }
                 });
-                $(".date.blink").fadeOut(150).fadeIn(150);
+
+                $("li.entries").each(function(){
+                    var width = $(this).width();
+                    var entertainmentsContainer = $(this).children("ul.entertainments").first();
+                    var entertainmentsContainerWidth = entertainmentsContainer.width();
+                    if(width < entertainmentsContainerWidth){
+                        var entertainmentsContainerMargin = entertainments.css('margin-left').slice(0, -2);
+
+                        if(entertainmentsContainerMargin < 0){
+                            var firstWidth = $(entertainmentsContainer).children().first().width();
+                            $(entertainmentsContainer).children().first().remove();
+                            $(entertainmentsContainer).width(entertainmentsContainerWidth - firstWidth);
+                            $(entertainmentsContainer).removeClass("transition");
+                            $(entertainmentsContainer).css("margin-left", 0);
+                        } else {
+
+                            $(entertainmentsContainer).children().first().clone().appendTo(entertainmentsContainer);
+                            var firstWidth = $(entertainmentsContainer).children().first().width();
+                            $(entertainmentsContainer).width(entertainmentsContainerWidth + firstWidth);
+                            $(entertainmentsContainer).addClass("transition");
+                            $(entertainmentsContainer).css("margin-left", "-"+firstWidth+"px");
+                        }
+                    }
+                });
+
+                $(".date.blink").fadeOut(250).fadeIn(250);
             }, 1000);
         }
     };
