@@ -20,6 +20,7 @@ $(document).ready(function(){
         "       cursor:pointer;                          " +
         "       background-size:contain;                 " +
         "       margin-left:.7ex;                        " +
+        "       visibility:hidden;                       " +
         "}                                               " +
         "li.prev {                                       " +
         "       height:32px;                             " +
@@ -28,6 +29,7 @@ $(document).ready(function(){
         "       cursor:pointer;                          " +
         "       background-size:contain;                 " +
         "       margin-left:.7ex;                        " +
+        "       visibility:hidden;                       " +
         "}                                               " +
         ".fridayweekend {                                " +
         "       width: 95%;                              " +
@@ -125,6 +127,10 @@ $(document).ready(function(){
             var i = storyProcessors[index].length;
             if(start > 0){
                 lottery.data("start", --start);
+                $(".next").css("visibility", "visible");
+                if(start == 0){
+                    $(".prev").css("visibility", "hidden");
+                }
                 var arr = story[start].split("-");
                 var id=arr[0];
                 var key=arr[1];
@@ -142,8 +148,12 @@ $(document).ready(function(){
             var start = lottery.data("start");
             var index = lottery.data("index");
             var i = storyProcessors[index].length;
-            if(start < story.length){
+            if(start < story.length - PAGE_SIZE){
                 lottery.data("start", ++start);
+                $(".prev").css("visibility", "visible");
+                if(start == story.length - PAGE_SIZE){
+                    $(".next").css("visibility", "hidden");
+                }
                 var arr = story[start+PAGE_SIZE].split("-");
                 var id=arr[0];
                 var key=arr[1];
@@ -159,6 +169,9 @@ $(document).ready(function(){
         $(next).appendTo($(this));
 
         var note = $(this).data("story").split(",").reverse();
+        if(note.length > PAGE_SIZE){
+            next.css("visibility", "visible");
+        }
         note = note.slice(0,PAGE_SIZE);
         $(this).addClass("fwc-"+index);
         $(this).data("start",0);
