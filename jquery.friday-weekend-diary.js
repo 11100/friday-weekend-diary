@@ -293,7 +293,7 @@ var LotteryProcessor = function(index, last, localOrder){
 	    li.insertAfter(fwc.children(".prev").first());
         }
 
-        var sum = 0;
+        var sum = 10;
         entertainments.children().each(function(){ 
             sum += $(this).width(); 
         });
