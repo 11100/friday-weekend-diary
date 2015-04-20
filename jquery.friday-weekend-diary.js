@@ -34,7 +34,7 @@ $(document).ready(function(){
         "       visibility:hidden;                       " +
         "       margin-left: -2.8ex;                     " +
         "       margin-right: 8em;                       " +
-        "       margin-bottom: -1em;                     " +
+        "       margin-bottom: -1ex;                     " +
         "}                                               " +
         ".fridayweekend {                                " +
         "       width: 95%;                              " +
@@ -154,13 +154,13 @@ $(document).ready(function(){
             var start = lottery.data("start");
             var index = lottery.data("index");
             var i = storyProcessors[index].length;
-            if(start < story.length - PAGE_SIZE - 1){
+            if(start < story.length - PAGE_SIZE){
                 lottery.data("start", ++start);
                 $(".prev").css("visibility", "visible");
-                if(start == story.length - PAGE_SIZE - 1){
+                if(start == story.length - PAGE_SIZE){
                     $(".next").css("visibility", "hidden");
                 }
-                var arr = story[start+PAGE_SIZE].split("-");
+                var arr = story[start+PAGE_SIZE - 1].split("-");
                 var id=arr[0];
                 var key=arr[1];
                 var processor = new LotteryProcessor(index, false, i);
