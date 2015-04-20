@@ -21,6 +21,8 @@ $(document).ready(function(){
         "       background-size:contain;                 " +
         "       margin-left:.7ex;                        " +
         "       visibility:hidden;                       " +
+        "       margin-left: -2.8ex;                     " +
+        "       margin-right: 8em;                       " +
         "}                                               " +
         "li.prev {                                       " +
         "       height:32px;                             " +
@@ -30,6 +32,9 @@ $(document).ready(function(){
         "       background-size:contain;                 " +
         "       margin-left:.7ex;                        " +
         "       visibility:hidden;                       " +
+        "       margin-left: -2.8ex;                     " +
+        "       margin-right: 8em;                       " +
+        "       margin-bottom: -1em;                     " +
         "}                                               " +
         ".fridayweekend {                                " +
         "       width: 95%;                              " +
@@ -101,8 +106,9 @@ $(document).ready(function(){
         "  -o-transform-origin: 50% 50%;                 " +
         "  transform-origin: 50% 50%;                    " +
         "   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);" +
-        "   margin-top:4.6em;                              " +
+        "   margin-top:4.6em;                            " +
         "   width:2em;                                   " +
+        "   margin-left: -2em;                           " +
         "}                                               " +
         ".fridayweekend .date a{                         " +
         "   text-decoration:none;                        " +
@@ -148,10 +154,10 @@ $(document).ready(function(){
             var start = lottery.data("start");
             var index = lottery.data("index");
             var i = storyProcessors[index].length;
-            if(start < story.length - PAGE_SIZE){
+            if(start < story.length - PAGE_SIZE - 1){
                 lottery.data("start", ++start);
                 $(".prev").css("visibility", "visible");
-                if(start == story.length - PAGE_SIZE){
+                if(start == story.length - PAGE_SIZE - 1){
                     $(".next").css("visibility", "hidden");
                 }
                 var arr = story[start+PAGE_SIZE].split("-");
