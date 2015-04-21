@@ -13,28 +13,40 @@ var fwcSuffix = "?callback=storyProcessors";
 
 $(document).ready(function(){
     var style = 
-        "li.next {                                       " +
+        "li.next{                                        " +
+        "       margin-left: -2em;                       " +
+        "       width:100%;                              " +
+        "       background:white;                        " +
+        "       z-index:1000;                            " +
+        "       position:relative;                       " +
+        "}                                               " +
+        "li.next a{                                      " +
+        "       visibility:hidden;                       " +
+        "       margin-left:.75ex;                       " +
+        "       display:block;                           " +
         "       height:32px;                             " +
         "       width:32px;                              " +
         "       background:transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAABTtJREFUeJzt3U9oHGUcxvHv701KNqAlaQ+baw/VTWkDioo99SI2B0t26yGoh1gE9VIKnvRiWvHiwYto9aISED3EkCkoLQpCvIsYaxspghWF5GDVFkFKO6+XBouQdrP7zsw77z6f8867Q59vd/OXgIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIjExcp6orm5ucbVq1ef8N4/5r3f65wbBX733n8LnMmy7Juy7iVCNjMzc9A5d8R7P2Vm4977v733P5rZlzt27Di7uLh4vZAnLuLQ/z9Hp9N5DngdaG71IO/910NDQ8eXlpZWS7inaLTb7Ue892875x7e6jF5nv/qnHt5eXn5Y8CHfP5CA5ienh5pNBoLZjbbzePzPL9uZs9mWfZJkfcVi3a7/bz3/rRzbqjLSz64cuXKCysrKzdC3UO3T7xt09PTI6Ojo4tmdrTba8xsyMyOtlqtn9fW1r4r6t5i0Ol0jpvZaTNz27jsgUajcX+z2cwuX76ch7iPQgLYHB840sPlZmYzKUfQ6XSOA2/1cq2Z7R8ZGblvYmLiTIgIggfQ5/ibko2gn/E3mdn+0dHRvc1ms+8ItvPyc1fz8/Ou0Wh8RH/jbzIz+7Ddbs8FOCsKIca/zVPj4+Pv0ufHcUFfAXbt2nXCzF4KeGQyrwSBxwfAzB7ct2/fTxcvXuz5M6dgnwXMzMyMOed+Ae4NdeZtvPf+WJZlCwWcXbgixt+U5/n62NjYnoWFhX96uT7YW4Bz7mmKGR9q/HZQ5PgAzrmJa9euzfR8fagb8d4fDnXWFmoXQdHjb8rzvOd/+2ABmFkr1Fl3fpp6RFDW+ADe+8lerw35WcA9Ac+6k+gjKHN8ADPr+a03ZAB/BjzrbqKNoOzxAczsj16vDRnA+YBndSO6CKoY/5bve70w5McAn4U6a3tPG0cEFY4P8HmvF4b8NPBTYCPUedtQeQRVjp/n+aXh4eFzvV4f7CuBFy5cuNFqtX4zsydDnbkNlX3FsOL/+TjnnllaWrrU6/VBvxS8trZ2fnJychx4NOS5XSo9gqrH996fXF5efr+fM4J+MwhgamrqJeC90Od2qbS3gwjGfyPLstf6PSf4t4NXVlb87Ozs2Y2NjSbwUOjzu1D4K0Ek479CgB8PK+QHQlKOIKXxocAfCUsxgtTGhwIDgLQiSHF8KDgASCOCVMeHEgKAekeQ8vhQUgBQzwhSHx9KDADqFcEgjA8lBwD1iGBQxocKAoC4Ixik8aGiACDOCAZtfCjx18O3Mj8/71ZXV98BXqzoFrz3/piZ7WTAxocIAoA4IqDCf4uqxocK3wJuF8PbQQXPCVQ7PkQSAEQRQemqHh8iCgAGK4IYxofIAoDBiCCW8SHCACDtCGIaHyINANKMILbxIeIAIK0IYhwfIg8A0ogg1vGhBgFAvSOIeXyoSQBQzwhiHx9qFADUK4I6jA81CwDqEUFdxocaBgBxR1Cn8aGmAUCcEdRtfKhxABBXBHUcH2oeAMQRQV3HhwQCgGojqPP4kEgAUE0EdR8fEgoAyo0ghfEhsQCgnAhSGR8SDACKjSCl8SHRAKCYCFIbHxIOAMJGkOL4kHgAECaCVMeHAQgA/otgfX19p5kd3M613vuTWZa9SoLjQyS/GVSmTqfTAd4E9tzpcXmer5nZiSzLvijnzqoxcAEAHDp0aHj37t2P37x587BzrsWtv3SS5/lfZvaDc+7cgQMHvjp16lSQv80nIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiLSv38BYeOka7164mgAAAAASUVORK5CYII=);" +
         "       cursor:pointer;                          " +
         "       background-size:contain;                 " +
-        "       margin-left:.7ex;                        " +
-        "       visibility:hidden;                       " +
-        "       margin-left: -2.8ex;                     " +
-        "       margin-right: 8em;                       " +
         "}                                               " +
-        "li.prev {                                       " +
+        "li.prev{                                        " +
+        "       margin-left: -2em;                       " +
+        "       width:100%;                              " +
+        "       margin-bottom: -1ex;                     " +
+        "       background:white;                        " +
+        "       z-index:1000;                            " +
+        "       position:relative;                       " +
+        "}                                               " +
+        "li.prev a{                                      " +
+        "       visibility:hidden;                       " +
+        "       margin-left:.75ex;                       " +
+        "       display:block;                           " +
         "       height:32px;                             " +
         "       width:32px;                              " +
         "       background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAABPxJREFUeJzt3UFoHFUcx/H//wWJBSE2ElYviqBmBppeRFAoOXmIVmES40FBpZdgq4inXvckgigexBaDFw9KFJKZ6MFaUcm5rpYg6culoF4aIixac9DE+XswfyhI2mTyZua9t7/Psey8HfL7kpRNNiECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgPBw2zfQhrm5uds2NjammHmKmceJ6A4iIhG5TkRXiOjLfr//9crKyk6rN9qAgQtgenr6WRF5m5nvvdnjyrK8SkSvLy8vf9HQrbViqO0baEq32zWjo6PvEtE7zDxyq8cz81Fmfi5N09uttd82cIutGIgAut2uWV1dfZ+IXq1w+Yk0Te+01n7l+r58EH0AN4z/8iGOeTTWCKIOwNH4KsoIog3A8fgqugiiDKCm8VVUEUQXQM3jq2giiCqAhsZXUUQQTQANj6+CjyCKAFoaXwUdQfABtDy+CjaCoAPwZHwVZATBBuDZ+Cq4CIIMwNPxVVARBBeA5+OrYCIIKoBAxldBRBBMAIGNr7yPIIgAAh1feR2B9wEEPr7yNgKvA4hkfOVlBN4GENn4yrsIvAwg0vGVVxF4F0Dk4ytvIvAqgAEZX3kRgTcBDNj4qvUIvAjAg/GF2nuXVKsRtB6AD+OLyClmvkBET7V0D61F0GoAvoxfFMVH1tpemqbXaMAiaC0An8bXfxjECFoJwMfx1aBF0HgAPo+vBimCRgMIYXw1KBE0FkBI46tBiKCRAEIcX8UeQe0BhDy+stb2kiTZYOboIqg1gBjGV9ba72OMoLYAYhpfxRhBLQHEOL6KLQLnAcQ8voopAucB7P4qtiq/jcuF2sdXnkQwbK395jCHOA1gZmbmeSJ6y+WZB9DY+MqDCE4kSXLZWrte9QBn3wOfnZ09sr29fdUYc7erMw+g8fFvlGXZaWY+18Zzl2X5c6fTeXB+fn67yvXG1Y3s7Ow8M4jjExEVRXFeRM608dzGmPs2NzcrfwZyFgAzP+nqrANofXzVZgQiUvlj7ywAIjrm8Kz98GZ81VYEIlL5Y+8sABG55S9gdsi78VUbERhjjla+1uF9XHd41s14O75qOoKyLP+oeq3LAK44PGsv3o+vmozAGLNW+VpXNyEiF1ydtfdThDG+KoriPBG9UvfziEjlVwRdBvAZEfVdnff/48MaX+V5fo5qjKAsy2sjIyN51eudvRK4vr7+d5Ikv9fwqliw4ytr7aU0TTeJ6KTrs40xZxYWFn6oer3Tl4Kttb3x8fEHmPm4oyODH1/VEYGIfJjn+RuHOcPlfwKJiKTT6ZwioiUXZ8UyvnL55UBEPun3+6fpv7e1Veb8u4G9Xq+cnJzMt7a2jjFzWvGY6MZXLj4T7I7/kos/a1fLD4T0er1yYmIiL8tygoiSA14e7fjqMBG4HJ+oxh8JW1tb+2c3gvuJaL//J/iLiF4oiuLjuu7LF9baS0mS/MrMJ2mfX4pF5IN+vz/n8g9aNvGWaM6y7EURedMYc89eDxKR75j5tTzPf2rgnryRZdnDzPweET2212NE5BdjzNmlpaVPXT9/Y++Jn5qaGh4eHn6CiB4nooeMMUeI6DcRuTw0NPT54uLij03di4c4y7JHmPlpETkuIncx858ism6MuTg2Nnax6vf7AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgBP8CDvybBYGXG0UAAAAASUVORK5CYII=);" +
         "       cursor:pointer;                          " +
         "       background-size:contain;                 " +
-        "       margin-left:.7ex;                        " +
-        "       visibility:hidden;                       " +
-        "       margin-left: -2.8ex;                     " +
-        "       margin-right: 8em;                       " +
-        "       margin-bottom: -1ex;                     " +
         "}                                               " +
         ".fridayweekend {                                " +
         "       width: 95%;                              " +
@@ -45,9 +57,6 @@ $(document).ready(function(){
         "       width: 95%;                              " +
         "       overflow: hidden;                        " +
         "       margin-left:1ex;                         " +
-        "}                                               " +
-        ".lottery {                                      " +
-        "       width: 99%;                              " +
         "}                                               " +
         ".descriptor {                                   " +
         "       width: 99%;                              " +
@@ -61,10 +70,10 @@ $(document).ready(function(){
         "       overflow: hidden;                        " +
         "}                                               " +
         ".transition {                                   " +
-        "      -webkit-transition: margin-left 0.9s;     " +
-        "      -moz-transition: margin-left 0.9s;        " +
-        "      -o-transition: margin-left 0.9s;          " +
-        "      transition: margin-left 0.9s;             " +
+        "      -webkit-transition: all 0.9s;             " +
+        "      -moz-transition: all 0.9s;                " +
+        "      -o-transition: all 0.9s;                  " +
+        "      transition: all 0.9s;                     " +
         "}                                               " +
         ".fridayweekend li.yes{                          " + 
         "	background:#abcdef;                      " + 
@@ -83,6 +92,7 @@ $(document).ready(function(){
         "       padding-top:2em;                         " +
         "}                                               " +
         ".fridayweekend li.lottery{                      " + 
+        "       width: 99%;                              " +
         "	clear:both;                              " + 
         "}                                               " +
         ".fridayweekend li{                              " + 
@@ -122,20 +132,20 @@ $(document).ready(function(){
 
     $(".fridayweekend").each(function(index,elem){
 
-        var prev = $("<li class='prev' />");
-        var next = $("<li class='next' />");
+        var prev = $("<li class='prev'><a></a></li>");
+        var next = $("<li class='next'><a></a></li>");
 
         prev.click(function(event){
-            var lottery = $(event.target).parent();
+            var lottery = $(event.target).parent().parent();
             var story = lottery.data("story").split(",").reverse();
             var start = lottery.data("start");
             var index = lottery.data("index");
             var i = storyProcessors[index].length;
             if(start > 0){
                 lottery.data("start", --start);
-                $(".next").css("visibility", "visible");
+                $(".next").children().first().css("visibility", "visible");
                 if(start == 0){
-                    $(".prev").css("visibility", "hidden");
+                    $(".prev").children().first().css("visibility", "hidden");
                 }
                 var arr = story[start].split("-");
                 var id=arr[0];
@@ -149,16 +159,16 @@ $(document).ready(function(){
         });
 
         next.click(function(event){
-            var lottery = $(event.target).parent();
+            var lottery = $(event.target).parent().parent();
             var story = lottery.data("story").split(",").reverse();
             var start = lottery.data("start");
             var index = lottery.data("index");
             var i = storyProcessors[index].length;
             if(start < story.length - PAGE_SIZE){
                 lottery.data("start", ++start);
-                $(".prev").css("visibility", "visible");
+                $(".prev").children().first().css("visibility", "visible");
                 if(start == story.length - PAGE_SIZE){
-                    $(".next").css("visibility", "hidden");
+                    $(".next").children().first().css("visibility", "hidden");
                 }
                 var arr = story[start+PAGE_SIZE - 1].split("-");
                 var id=arr[0];
@@ -176,7 +186,7 @@ $(document).ready(function(){
 
         var note = $(this).data("story").split(",").reverse();
         if(note.length > PAGE_SIZE){
-            next.css("visibility", "visible");
+            next.children().first().css("visibility", "visible");
         }
         note = note.slice(0,PAGE_SIZE);
         $(this).addClass("fwc-"+index);
@@ -206,11 +216,19 @@ var LotteryProcessor = function(index, last, localOrder){
     this.i = index;
     this.order = localOrder;
     this.processLotteryUp = function(data){
+        setTimeout(function(i){
+            $(".fwc-"+i).children(".lottery").first().css("margin-top", 0);
+        }, 100, this.i);
         $(".fwc-"+this.i).children(".lottery").last().remove();
         storyProcessors[this.i][this.order].insertLottery(data, false);
     }
     this.processLotteryDown = function(data){
-        $(".fwc-"+this.i).children(".lottery").first().remove();
+        var lottery = $(".fwc-"+this.i).children(".lottery").first();
+        lottery.addClass("transition");
+        lottery.css("margin-top", "-120px");
+        setTimeout(function(i){
+            $(".fwc-"+i).children(".lottery").first().remove();
+        }, 1000, this.i);
         storyProcessors[this.i][this.order].insertLottery(data, true);
     }
     this.processLotteryWinner = function(winnerId){
@@ -296,6 +314,8 @@ var LotteryProcessor = function(index, last, localOrder){
         if(bDown){
 	    li.insertBefore(fwc.children(".next").first());
         } else {
+            li.css("margin-top", "-120px");
+            li.addClass("transition");
 	    li.insertAfter(fwc.children(".prev").first());
         }
 
@@ -306,6 +326,9 @@ var LotteryProcessor = function(index, last, localOrder){
         entertainments.width(sum);
 
         if(this.last){
+
+            $(".fwc-"+this.i).height($(".fwc-"+this.i).height());
+
             setInterval(function(){
                 $(".lottery.live").each(function(){
                     var container = $(this).find(".yet").not(".may");
