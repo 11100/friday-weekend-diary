@@ -230,16 +230,16 @@ var LotteryProcessor = function(index, last, localOrder){
         var browserTimezoneOffset = (new Date).getTimezoneOffset();
         var gmtJsonGenerationDateTime = data.gmtJsonGenerationDateTime;
         var browserFragmentGenerationTime = Date.now();
-        var timeZoneAdjusted = lotteryDate + lotteryTimezoneOffset - browserTimezoneOffset;
-        var clientServerDiff = browserFragmentGenerationTime + browserTimezoneOffset - gmtJsonGenerationDateTime;
+        var timeZoneAdjusted = lotteryDate + (lotteryTimezoneOffset - browserTimezoneOffset)*60*1000;
+        var clientServerDiff = browserFragmentGenerationTime + browserTimezoneOffset*60*1000 - gmtJsonGenerationDateTime;
         var adjustedLotteryDateTime = timeZoneAdjusted + clientServerDiff;
         var d = new Date(adjustedLotteryDateTime);
-        var formattedDate = new Date( d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds() );
-        var dd = formattedDate.getDate();
-        var m =  formattedDate.getMonth() + 1;
-        var y = formattedDate.getFullYear();
-        var h = formattedDate.getHours();
-        var mm = formattedDate.getMinutes();
+
+        var dd = d.getDate();
+        var m =  d.getMonth() + 1;
+        var y = d.getFullYear();
+        var h = d.getHours();
+        var mm = d.getMinutes();
         var dateString = dd + "." + m + "." + y + "<br/>" + h + ":" + mm;
 
 	var fwc = $(".fwc-" + this.i);
@@ -255,7 +255,7 @@ var LotteryProcessor = function(index, last, localOrder){
         if(data.winnerEntertainmentId == 0){
             li.addClass("live");
             date.addClass("blink");
-            var eta_ms = formattedDate.getTime() - Date.now() + 2345;
+            var eta_ms = d.getTime() - Date.now() + 1234;
             var timeout = setTimeout(function(id,key,index,i){
 
                 var script = document.createElement('script');
