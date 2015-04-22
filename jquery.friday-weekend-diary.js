@@ -4,6 +4,7 @@ jQuery.fn.random = function() {
     return jQuery(this[randomIndex]);
 };
 
+var keydownFuze = true;
 var PAGE_SIZE = 4;
 var order = 0;
 var storyProcessors = [[]];
@@ -19,6 +20,10 @@ $(document).ready(function(){
         "       background:white;                        " +
         "       z-index:1000;                            " +
         "       position:relative;                       " +
+        "       position: absolute;                      " +
+        "       left: 2.5em;                             " +
+        "       bottom: 0;                               " +
+        "       float: none !important;                  " +
         "}                                               " +
         "li.next a{                                      " +
         "       visibility:hidden;                       " +
@@ -51,7 +56,7 @@ $(document).ready(function(){
         ".fridayweekend {                                " +
         "       width: 95%;                              " +
         "       min-width: 800px;                        " +
-        "       overflow: hidden;                        " +
+        "       margin-top:3em;                          " +
         "}                                               " +
         ".entries {                                      " +
         "       width: 95%;                              " +
@@ -185,9 +190,6 @@ $(document).ready(function(){
         $(next).appendTo($(this));
 
         var note = $(this).data("story").split(",").reverse();
-        if(note.length > PAGE_SIZE){
-            next.children().first().css("visibility", "visible");
-        }
         note = note.slice(0,PAGE_SIZE);
         $(this).addClass("fwc-"+index);
         $(this).data("start",0);
@@ -223,9 +225,17 @@ var LotteryProcessor = function(index, last, localOrder){
         storyProcessors[this.i][this.order].insertLottery(data, false);
     }
     this.processLotteryDown = function(data){
-        var lottery = $(".fwc-"+this.i).children(".lottery").first();
-        lottery.addClass("transition");
-        lottery.css("margin-top", "-120px");
+        var i;
+        var lottery;
+        var lotteries = $(".fwc-"+this.i).children(".lottery");
+        for(i = 0; i < PAGE_SIZE; i++){
+            lottery = lotteries[i];
+            if($(lottery).css("margin-top") == "0px"){
+                break;
+            }
+        }
+        $(lottery).addClass("transition");
+        $(lottery).css("margin-top", "-120px");
         setTimeout(function(i){
             $(".fwc-"+i).children(".lottery").first().remove();
         }, 1000, this.i);
@@ -319,7 +329,7 @@ var LotteryProcessor = function(index, last, localOrder){
 	    li.insertAfter(fwc.children(".prev").first());
         }
 
-        var sum = 10;
+        var sum = 50;
         entertainments.children().each(function(){ 
             sum += $(this).width(); 
         });
@@ -327,7 +337,37 @@ var LotteryProcessor = function(index, last, localOrder){
 
         if(this.last){
 
-            $(".fwc-"+this.i).height($(".fwc-"+this.i).height());
+            $(".fwc-"+this.i).css("overflow", "hidden");
+            $(".fwc-"+this.i).css("position", "absolute");
+            $(".fwc-"+this.i).height($(".fwc-"+this.i).height()+35);
+
+            var size = $(".fwc-"+this.i).data("story").split(",").length;
+            if(size > PAGE_SIZE){
+                $(".fwc-"+this.i).children(".next").first().children().first().css("visibility", "visible");
+            }
+
+            $(document).keydown(function(e) {
+                switch(e.which) {
+                case 38: // up
+                    if(keydownFuze){
+                        keydownFuze = false;
+                        $(".prev a").trigger("click");
+                        setTimeout(function(){
+                            keydownFuze = true;
+                        }, 500);
+                    }
+                    break;
+                case 40: // down
+                    if(keydownFuze){
+                        keydownFuze = false;
+                        $(".next a").trigger("click");
+                        setTimeout(function(){
+                            keydownFuze = true;
+                        }, 500);
+                    }
+                    break;
+                }
+            });
 
             setInterval(function(){
                 $(".lottery.live").each(function(){
