@@ -1,3 +1,15 @@
+/*
+*
+*     Define following global functions first:
+*
+* (1) fridayWeekendEntertainmentClicked(lotteryCode, lotteryKey, clickedEntertainmentId, event);
+* (2) fridayWeekendLotteryLiveResults(lotteryCode, lotteryKey, winnerEntertainmentId);
+* (3) fridayWeekendLotteryLoaded(lotteryData);
+*
+*     Visit www.fridayweekend.com API reference to understand more.
+*
+ */
+
 jQuery.fn.reverse = [].reverse;
 jQuery.fn.random = function() {
     var randomIndex = Math.floor(Math.random() * this.length);  
@@ -14,6 +26,9 @@ var fwcSuffix = "?callback=storyProcessors";
 
 $(document).ready(function(){
     var style = 
+        ".icon{                                          " +
+        "       cursor:pointer;                          " +
+        "}                                               " +
         "li.next{                                        " +
         "       margin-left: -2em;                       " +
         "       width:100%;                              " +
@@ -247,6 +262,7 @@ var LotteryProcessor = function(index, last, localOrder){
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("may");
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("yet");
         $(".lottery.code-"+this.id+".key-"+this.key+" .entry.id-"+winnerId).addClass("yes");
+        fridayWeekendLotteryLiveResults(this.id, this.key, winnerId);
     }
     this.insertLottery = function(data, bDown){
 
@@ -306,6 +322,9 @@ var LotteryProcessor = function(index, last, localOrder){
             }
 	    var entertainment = $("<ul class='entertainment'></ul>");
 	    var icon = $("<li class='icon'><img src='http://www.fridayweekend.com/"+this.icon+"'/></li>");
+            icon.click(function(event){
+                fridayWeekendEntertainmentClicked(data.id, data.key, this.id, event);
+            });
 	    var name = $("<li class='name'><span>"+this.name+"</span></li>");
 	    var www = $("<li class='www'><span>"+this.www+"</span></li>");
 	    entertainment.append(icon);
@@ -403,6 +422,7 @@ var LotteryProcessor = function(index, last, localOrder){
                 $(".date.blink").fadeOut(150).fadeIn(150);
             }, 1000);
         }
+        fridayWeekendLotteryLoaded(data);
     };
     this.processLottery = function(data){
         if(this.order > order){
