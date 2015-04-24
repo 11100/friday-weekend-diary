@@ -26,8 +26,17 @@ var fwcSuffix = "?callback=storyProcessors";
 
 $(document).ready(function(){
     var style = 
-        ".icon{                                          " +
+        "li.icon{                                        " +
         "       cursor:pointer;                          " +
+        "}                                               " +
+        "li.icon img{                                    " +
+        "       max-width:90%;                           " +
+        "       max-height:99%;                          " +
+        "       border:none;                             " +
+        "       position:relative;                       " +
+        "       z-index:1;                               " +
+        "       margin:0 auto;                           " +
+        "       float:left;                              " +
         "}                                               " +
         "li.next{                                        " +
         "       margin-left: -2em;                       " +
@@ -71,7 +80,6 @@ $(document).ready(function(){
         ".fridayweekend {                                " +
         "       width: 95%;                              " +
         "       min-width: 800px;                        " +
-        "       margin-top:3em;                          " +
         "}                                               " +
         ".entries {                                      " +
         "       width: 95%;                              " +
@@ -375,6 +383,7 @@ var LotteryProcessor = function(index, last, localOrder){
                             keydownFuze = true;
                         }, 500);
                     }
+                    e.preventDefault();
                     break;
                 case 40: // down
                     if(keydownFuze){
@@ -384,6 +393,7 @@ var LotteryProcessor = function(index, last, localOrder){
                             keydownFuze = true;
                         }, 500);
                     }
+                    e.preventDefault();
                     break;
                 }
             });
