@@ -265,7 +265,6 @@ var LotteryProcessor = function(index, last, localOrder){
         storyProcessors[this.i][this.order].insertLottery(data, true);
     }
     this.applySingleResult = function(winnerId, id, key){
-        console.log("winner! :"+winnerId+", id-key: "+id+"-"+key);
         $(".lottery.code-"+id+".key-"+key).removeClass("live");
         $(".lottery.code-"+id+".key-"+key+" .date").removeClass("blink");
         $(".lottery.code-"+id+".key-"+key+" .entry").removeClass("may");
@@ -282,9 +281,7 @@ var LotteryProcessor = function(index, last, localOrder){
         var id = this.id;
         var key = this.key;
         $(results).each(function(i,e){
-            console.log("applying result for: "+e.entertainmentId);
             if(e.players.length){
-                console.log("calling for: "+id+"-"+key+" : "+e.entertainmentId);
                 applySingleResult(e.entertainmentId, id, key);
             }
         });
