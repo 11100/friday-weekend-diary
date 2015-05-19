@@ -20,7 +20,7 @@ var keydownFuze = true;
 var PAGE_SIZE = 4;
 var order = 0;
 var storyProcessors = [[]];
-var fwcWinnerPrefix = "http://www.fridayweekend.com/rest/getLotteryWinner/";
+var fwcWinnerPrefix = "http://www.fridayweekend.com/rest/getLotteryResults/";
 var fwcPrefix = "http://www.fridayweekend.com/rest/getLottery/";
 var fwcSuffix = "?callback=storyProcessors";
 
@@ -264,13 +264,30 @@ var LotteryProcessor = function(index, last, localOrder){
         }, 1000, this.i);
         storyProcessors[this.i][this.order].insertLottery(data, true);
     }
-    this.processLotteryWinner = function(winnerId){
-        $(".lottery.code-"+this.id+".key-"+this.key).removeClass("live");
-        $(".lottery.code-"+this.id+".key-"+this.key+" .date").removeClass("blink");
-        $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("may");
-        $(".lottery.code-"+this.id+".key-"+this.key+" .entry").removeClass("yet");
-        $(".lottery.code-"+this.id+".key-"+this.key+" .entry.id-"+winnerId).addClass("yes");
-        fridayWeekendLotteryLiveResults(this.id, this.key, winnerId);
+    this.applySingleResult = function(winnerId, id, key){
+        console.log("winner! :"+winnerId+", id-key: "+id+"-"+key);
+        $(".lottery.code-"+id+".key-"+key).removeClass("live");
+        $(".lottery.code-"+id+".key-"+key+" .date").removeClass("blink");
+        $(".lottery.code-"+id+".key-"+key+" .entry").removeClass("may");
+        $(".lottery.code-"+id+".key-"+key+" .entry").removeClass("yet");
+        $(".lottery.code-"+id+".key-"+key+" .entry.id-"+winnerId).addClass("yes");
+        try{
+            fridayWeekendLotteryLiveResults(id, key, winnerId);
+        } catch(err) {
+            // silent
+        }
+    }
+    this.processLotteryWinner = function(results){
+        var applySingleResult = this.applySingleResult;
+        var id = this.id;
+        var key = this.key;
+        $(results).each(function(i,e){
+            console.log("applying result for: "+e.entertainmentId);
+            if(e.players.length){
+                console.log("calling for: "+id+"-"+key+" : "+e.entertainmentId);
+                applySingleResult(e.entertainmentId, id, key);
+            }
+        });
     }
     this.insertLottery = function(data, bDown){
 
@@ -297,14 +314,14 @@ var LotteryProcessor = function(index, last, localOrder){
 	var fwc = $(".fwc-" + this.i);
 	var lottery = $("<ul class='descriptor'></ul>");
 	var li = $("<li class='lottery code-"+data.id+" key-"+data.key+"'></li>");
-	var winner =  $("<li class='winner'><span>"+data.winnerEntertainmentId+"</span></li>");
+	var winner =  $("<li class='winner'><span>"+data.hasResults+"</span></li>");
         var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
 	var date =  $("<li class='date'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
 	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
 	var entries = $("<li class='entries'></li>");
 	var entertainments = $("<ul class='entertainments'></ul>");
 
-        if(data.winnerEntertainmentId == 0){
+        if(data.hasResults == false){
             li.addClass("live");
             date.addClass("blink");
             var eta_ms = d.getTime() - Date.now() + 1234;
@@ -319,19 +336,26 @@ var LotteryProcessor = function(index, last, localOrder){
 
 	$(data.entertainments).each(function(){
 	    var entry = $("<li class='entry id-"+this.id+"'></li>");
-            if(data.winnerEntertainmentId > 0){
-                if(this.id == data.winnerEntertainmentId){
-                    entry.addClass("yes");
-                } else {
-                    entry.addClass("not");
-                }
+            var currentEntertainment = this.id;
+            if(data.hasResults == true){
+                $(data.results).each(function(i,e){
+                    if(currentEntertainment == e.entertainmentId && e.players.length){
+                        entry.addClass("yes");
+                    } else {
+                        entry.addClass("not");
+                    }
+                });
             } else {
                 entry.addClass("yet");
             }
 	    var entertainment = $("<ul class='entertainment'></ul>");
 	    var icon = $("<li class='icon'><img src='http://www.fridayweekend.com/"+this.icon+"'/></li>");
             icon.click(function(event){
-                fridayWeekendEntertainmentClicked(data.id, data.key, this.id, event);
+                try{
+                    fridayWeekendEntertainmentClicked(data.id, data.key, this.id, event);
+                } catch(err){
+                    // silent
+                }
             });
 	    var name = $("<li class='name'><span>"+this.name+"</span></li>");
 	    var www = $("<li class='www'><span>"+this.www+"</span></li>");
@@ -432,7 +456,11 @@ var LotteryProcessor = function(index, last, localOrder){
                 $(".date.blink").fadeOut(150).fadeIn(150);
             }, 1000);
         }
-        fridayWeekendLotteryLoaded(data);
+        try{
+            fridayWeekendLotteryLoaded(data);
+        } catch (err){
+            // silent
+        }
     };
     this.processLottery = function(data){
         if(this.order > order){
