@@ -1,4 +1,5 @@
-/*
+
+      /*
 *
 *     Define following global functions first:
 *
@@ -154,6 +155,7 @@ $(document).ready(function(){
         "   background-color:#25ace4;                    " +
         "   display:block;                               " +
         "   width:6em;                                   " +
+        "   text-align:center;                           " +
         "}                                               ";
 
     $("head").append($("<style></style>").text(style));
@@ -436,10 +438,7 @@ var LotteryProcessor = function(index, last, localOrder){
                         var entertainmentsContainerMargin = entertainmentsContainer.css('margin-left').slice(0, -2);
                         if(entertainmentsContainerMargin < 0){
                             var firstWidth = entertainmentsContainer.children().first().width();
-                            entertainmentsContainer.children().first().remove();
-                            entertainmentsContainer.width(entertainmentsContainerWidth - firstWidth);
-                            entertainmentsContainer.removeClass("transition");
-                            entertainmentsContainer.css("margin-left", 0);
+                            entertainmentsContainer.css("margin-left", 0).removeClass("transition").width(entertainmentsContainerWidth - firstWidth).children().first().remove();
                         } else {
                             entertainmentsContainer.children().first().clone().appendTo(entertainmentsContainer);
                             var firstWidth = entertainmentsContainer.children().first().width();
