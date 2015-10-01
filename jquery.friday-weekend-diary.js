@@ -1,5 +1,6 @@
-
-      /*
+/*
+*
+*     Project: https://github.com/11100/friday-weekend-diary/
 *
 *     Define following global functions first:
 *
@@ -21,6 +22,7 @@ var keydownFuze = true;
 var PAGE_SIZE = 4;
 var order = 0;
 var storyProcessors = [[]];
+var colors = [[]];
 var fwcWinnerPrefix = "http://www.fridayweekend.com/rest/getLotteryResults/";
 var fwcPrefix = "http://www.fridayweekend.com/rest/getLottery/";
 var fwcSuffix = "?callback=storyProcessors";
@@ -155,7 +157,6 @@ $(document).ready(function(){
         "   background-color:#25ace4;                    " +
         "   display:block;                               " +
         "   width:6em;                                   " +
-        "   text-align:center;                           " +
         "}                                               ";
 
     $("head").append($("<style></style>").text(style));
@@ -180,8 +181,14 @@ $(document).ready(function(){
                 var arr = story[start].split("-");
                 var id=arr[0];
                 var key=arr[1];
+                var color=arr[2];
                 var processor = new LotteryProcessor(index, false, i);
                 storyProcessors[index].push(processor);
+                var access = id + "-" + key;
+                if(!(access in colors)){
+                    colors[access] = [];
+                }
+                colors[access].push(color);
                 var script = document.createElement('script');
                 script.src = fwcPrefix+id+"/"+key+fwcSuffix+"["+index+"]["+i+"].processLotteryUp";
                 $("head").append(script);
@@ -203,8 +210,14 @@ $(document).ready(function(){
                 var arr = story[start+PAGE_SIZE - 1].split("-");
                 var id=arr[0];
                 var key=arr[1];
+                var color=arr[2];
                 var processor = new LotteryProcessor(index, false, i);
                 storyProcessors[index].push(processor);
+                var access = id + "-" + key;
+                if(!(access in colors)){
+                    colors[access] = [];
+                }
+                colors[access].push(color);
                 var script = document.createElement('script');
                 script.src = fwcPrefix+id+"/"+key+fwcSuffix+"["+index+"]["+i+"].processLotteryDown";
                 $("head").append(script);
@@ -213,7 +226,6 @@ $(document).ready(function(){
 
         $(prev).prependTo($(this));
         $(next).appendTo($(this));
-
         var note = $(this).data("story").split(",").reverse();
         note = note.slice(0,PAGE_SIZE);
         $(this).addClass("fwc-"+index);
@@ -223,11 +235,17 @@ $(document).ready(function(){
         
         $(note).each(function(i,v){
             condition = (index == $(".fridayweekend").length - 1) && (i == $(note).length - 1);
-            var processor = new LotteryProcessor(index, condition, i);
-            storyProcessors[index].push(processor);
             var arr = v.split("-");
             var key = arr[1];
             var code = arr[0];
+            var color = arr[2];
+            var processor = new LotteryProcessor(index, condition, i);
+            storyProcessors[index].push(processor);
+            var access = code + "-" + key;
+            if(!(access in colors)){
+                colors[access] = [];
+            }
+            colors[access].push(color);
             var script = document.createElement('script');
             setTimeout(function(){
                 script.src = fwcPrefix+code+"/"+key+fwcSuffix+"["+index+"]["+i+"].processLottery";
@@ -242,6 +260,7 @@ var LotteryProcessor = function(index, last, localOrder){
     this.last = last;
     this.i = index;
     this.order = localOrder;
+
     this.processLotteryUp = function(data){
         setTimeout(function(i){
             $(".fwc-"+i).children(".lottery").first().css("margin-top", 0);
@@ -249,6 +268,7 @@ var LotteryProcessor = function(index, last, localOrder){
         $(".fwc-"+this.i).children(".lottery").last().remove();
         storyProcessors[this.i][this.order].insertLottery(data, false);
     }
+
     this.processLotteryDown = function(data){
         var i;
         var lottery;
@@ -266,6 +286,7 @@ var LotteryProcessor = function(index, last, localOrder){
         }, 1000, this.i);
         storyProcessors[this.i][this.order].insertLottery(data, true);
     }
+
     this.applySingleResult = function(winnerId, id, key){
         $(".lottery.code-"+id+".key-"+key).removeClass("live");
         $(".lottery.code-"+id+".key-"+key+" .date").removeClass("blink");
@@ -278,19 +299,24 @@ var LotteryProcessor = function(index, last, localOrder){
             // silent
         }
     }
+
     this.processLotteryWinner = function(results){
         var applySingleResult = this.applySingleResult;
         var id = this.id;
         var key = this.key;
         $(results).each(function(i,e){
             if(e.players.length){
-                applySingleResult(e.entertainmentId, id, key);
+                $(e.players).each(function(j,u){
+                    if($.inArray(u.name, colors[id + "-" + key])){
+                        applySingleResult(e.entertainmentId, id, key);
+                    }
+                });
             }
         });
     }
-    this.insertLottery = function(data, bDown){
 
-        this.id = data.id;
+    this.insertLottery = function(data, bDown){
+        this.id = data.code;
         this.key = data.key;
 
         var lotteryDate = data.date;
@@ -302,19 +328,17 @@ var LotteryProcessor = function(index, last, localOrder){
         var clientServerDiff = browserFragmentGenerationTime + browserTimezoneOffset*60*1000 - gmtJsonGenerationDateTime;
         var adjustedLotteryDateTime = timeZoneAdjusted + clientServerDiff;
         var d = new Date(adjustedLotteryDateTime);
-
         var dd = d.getDate();
         var m =  d.getMonth() + 1;
         var y = d.getFullYear();
         var h = d.getHours();
         var mm = d.getMinutes();
         var dateString = dd + "." + m + "." + y + "<br/>" + h + ":" + mm;
-
 	var fwc = $(".fwc-" + this.i);
 	var lottery = $("<ul class='descriptor'></ul>");
-	var li = $("<li class='lottery code-"+data.id+" key-"+data.key+"'></li>");
+	var li = $("<li class='lottery code-"+data.code+" key-"+data.key+"'></li>");
 	var winner =  $("<li class='winner'><span>"+data.hasResults+"</span></li>");
-        var href = "http://www.fridayweekend.com/show?code="+data.id+"&amp;key="+data.key;
+        var href = "http://www.fridayweekend.com/show?code="+data.code+"&amp;key="+data.key;
 	var date =  $("<li class='date'><a href='"+href+"' target='_new'>"+dateString+"</a></li>");
 	var offset =  $("<li class='offset'><span>"+data.timezoneOffset+"</span></li>");
 	var entries = $("<li class='entries'></li>");
@@ -325,21 +349,24 @@ var LotteryProcessor = function(index, last, localOrder){
             date.addClass("blink");
             var eta_ms = d.getTime() - Date.now() + 1234;
             var timeout = setTimeout(function(id,key,index,i){
-
                 var script = document.createElement('script');
                 script.src = fwcWinnerPrefix+id+"/"+key+fwcSuffix+"["+index+"]["+i+"].processLotteryWinner";
                 $("head").append(script);
-
-            }, eta_ms, data.id, data.key,this.i,this.order);
+            }, eta_ms, data.code, data.key,this.i,this.order);
         }
 
 	$(data.entertainments).each(function(){
 	    var entry = $("<li class='entry id-"+this.id+"'></li>");
             var currentEntertainment = this.id;
+            var currentKey = this.key;
             if(data.hasResults == true){
                 $(data.results).each(function(i,e){
                     if(currentEntertainment == e.entertainmentId && e.players.length){
-                        entry.addClass("yes");
+                        $(e.players).each(function(j,u){
+                            if($.inArray(u.name, colors[data.code + "-" + data.key]) >= 0){
+                                entry.addClass("yes");
+                            }
+                        });
                     } else {
                         entry.addClass("not");
                     }
@@ -351,7 +378,7 @@ var LotteryProcessor = function(index, last, localOrder){
 	    var icon = $("<li class='icon'><img src='http://www.fridayweekend.com/"+this.icon+"'/></li>");
             icon.click(function(event){
                 try{
-                    fridayWeekendEntertainmentClicked(data.id, data.key, this.id, event);
+                    fridayWeekendEntertainmentClicked(data.code, data.key, this.id, event);
                 } catch(err){
                     // silent
                 }
@@ -364,6 +391,7 @@ var LotteryProcessor = function(index, last, localOrder){
 	    entry.append(entertainment);
 	    entertainments.append(entry);
 	});
+
 	lottery.append(winner);
 	lottery.append(date);
 	lottery.append(offset);
@@ -386,11 +414,9 @@ var LotteryProcessor = function(index, last, localOrder){
         entertainments.width(sum);
 
         if(this.last){
-
             $(".fwc-"+this.i).css("overflow", "hidden");
             $(".fwc-"+this.i).css("position", "absolute");
             $(".fwc-"+this.i).height($(".fwc-"+this.i).height()+35);
-
             var size = $(".fwc-"+this.i).data("story").split(",").length;
             if(size > PAGE_SIZE){
                 $(".fwc-"+this.i).children(".next").first().children().first().css("visibility", "visible");
@@ -438,7 +464,10 @@ var LotteryProcessor = function(index, last, localOrder){
                         var entertainmentsContainerMargin = entertainmentsContainer.css('margin-left').slice(0, -2);
                         if(entertainmentsContainerMargin < 0){
                             var firstWidth = entertainmentsContainer.children().first().width();
-                            entertainmentsContainer.css("margin-left", 0).removeClass("transition").width(entertainmentsContainerWidth - firstWidth).children().first().remove();
+                            entertainmentsContainer.children().first().remove();
+                            entertainmentsContainer.width(entertainmentsContainerWidth - firstWidth);
+                            entertainmentsContainer.removeClass("transition");
+                            entertainmentsContainer.css("margin-left", 0);
                         } else {
                             entertainmentsContainer.children().first().clone().appendTo(entertainmentsContainer);
                             var firstWidth = entertainmentsContainer.children().first().width();
@@ -452,6 +481,7 @@ var LotteryProcessor = function(index, last, localOrder){
                 $(".date.blink").fadeOut(150).fadeIn(150);
             }, 1000);
         }
+
         try{
             fridayWeekendLotteryLoaded(data);
         } catch (err){
