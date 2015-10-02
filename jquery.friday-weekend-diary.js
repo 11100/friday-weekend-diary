@@ -307,7 +307,7 @@ var LotteryProcessor = function(index, last, localOrder){
         $(results).each(function(i,e){
             if(e.players.length){
                 $(e.players).each(function(j,u){
-                    if($.inArray(u.name, colors[id + "-" + key])){
+                    if($.inArray(u.name, colors[id + "-" + key]) >= 0){
                         applySingleResult(e.entertainmentId, id, key);
                     }
                 });
