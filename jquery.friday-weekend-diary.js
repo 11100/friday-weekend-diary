@@ -23,9 +23,11 @@ var PAGE_SIZE = 4;
 var order = 0;
 var storyProcessors = [[]];
 var colors = [[]];
+var fwcStoryPrefix = "http://www.fridayweekend.com/rest/sms/story/";
 var fwcWinnerPrefix = "http://www.fridayweekend.com/rest/getLotteryResults/";
 var fwcPrefix = "http://www.fridayweekend.com/rest/getLottery/";
 var fwcSuffix = "?callback=storyProcessors";
+var fwcStorySuffix = "?callback=fillStory";
 
 $(document).ready(function(){
     var style = 
@@ -161,6 +163,26 @@ $(document).ready(function(){
 
     $("head").append($("<style></style>").text(style));
 
+    var point = $(".fridayweekend").data("story");
+    var script = document.createElement('script');
+    script.src = fwcStoryPrefix + point + fwcStorySuffix;
+    $("head").append(script);
+});
+
+var fillStory = function(data){
+    if(data.length){
+        var story = "";
+        $(data).each(function(i,v){
+            story = story + v.topic + ",";
+        });
+        story = story.slice(0, -1);
+        $(".fridayweekend").data("story", story);
+        processPreparedStories();
+    }
+}
+
+var processPreparedStories = function(){
+
     $(".fridayweekend").each(function(index,elem){
 
         var prev = $("<li class='prev'><a></a></li>");
@@ -254,7 +276,7 @@ $(document).ready(function(){
             delay++;
         });
     });
-});
+}
 
 var LotteryProcessor = function(index, last, localOrder){
     this.last = last;
